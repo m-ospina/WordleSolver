@@ -48,10 +48,10 @@ public class WordleSolver {
     }
 
     public static void main(String[] args) throws IOException {
-        FileInputStream fileStream = new FileInputStream("wordle_wordbank.txt");
+        FileInputStream fileStream = new FileInputStream("C:/Users/Nicholas/Desktop/m-ospina/WordleSolver/wordle_wordbank.txt");
         Scanner fileReader = new Scanner(fileStream);
         Scanner scnr = new Scanner (System.in);
-        ArrayList<String> wordleWordBank = new ArrayList<String> ();
+        ArrayList<String> wordleWordBank = new ArrayList<String>();
 
         while (fileReader.hasNextLine()) { //Reads all possible wordle words from input from a file
             String currentWord = fileReader.nextLine();
@@ -75,16 +75,20 @@ public class WordleSolver {
             System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
             String hint = scnr.nextLine();
 
+            // Nick Was Here ---------------------------------------------
+            boolean isValidHint = hint.length() == guess.length() && hint.chars().allMatch(c -> c == 'g' || c == 'x' || c == 'y');
+
+            while (!isValidHint) {
+                System.out.println("Invalid character or length, please ensure your inputs are valid");
+                System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
+                hint = scnr.nextLine();
+                isValidHint = hint.length() == guess.length() && hint.chars().allMatch(c -> c == 'g' || c == 'x' || c == 'y');
+            }
+            // Nick Stopped Here ----------------------------------------
+
             if (hint.equals("ggggg")) { //Once all letters are green the word is correct and the code breaks.
                 break;
             }
-            
-            /*for (int j = 0; j < 5; j++ ) { //Validates that every character in the hint string is a valid hint character
-                if (hint.charAt(j) != ('g') || hint.charAt(j) != 'y' || hint.charAt(j) != 'x') {
-                    System.out.println("Invalid hint character, please try again.");
-                    i--;
-                }
-            }*/
 
             findValidWords(wordleWordBank, guess, hint);
             System.out.println("\nPossible words after guess " + i + ":\n" + wordleWordBank);
