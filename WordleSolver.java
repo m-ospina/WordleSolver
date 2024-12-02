@@ -4,7 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class WordleSolver {
-    public static void findValidWords (ArrayList<String> wordleWordBank, String guess, String hints) { //Interates through the list of words and adds/outputs all viable words to a new arraylist
+    //Iterates through the list of words and adds/outputs all viable words to a new arraylist
+    public static ArrayList<String> findValidWords (ArrayList<String> wordleWordBank, String guess, String hints) {
         ArrayList<String> validWords = new ArrayList <String>();
 
         for (String currentWord : wordleWordBank) {
@@ -13,11 +14,11 @@ public class WordleSolver {
             }
         }
 
-        wordleWordBank.clear();
-        wordleWordBank.addAll(validWords);
+        return validWords;
     }
 
-    private static boolean checkRequirements (String currentWord, String guess, String hints) { //Uses green yellow and gray hints to return false whenever words do not follow the hint. 
+    //Uses green yellow and gray hints to return false whenever words do not follow the hint.
+    private static boolean checkRequirements (String currentWord, String guess, String hints) {  
         for (int i = 0; i < guess.length(); i++) {
             char guessChar = guess.charAt(i);
             char hintChar = hints.charAt(i);
@@ -52,8 +53,10 @@ public class WordleSolver {
         Scanner fileReader = new Scanner(fileStream);
         Scanner scnr = new Scanner (System.in);
         ArrayList<String> wordleWordBank = new ArrayList<String> ();
+        ArrayList<String> updatedWordBank = new ArrayList<String>();
 
-        while (fileReader.hasNextLine()) { //Reads all possible wordle words from input from a file
+        //Reads all possible wordle words from input from a file
+        while (fileReader.hasNextLine()) { 
             String currentWord = fileReader.nextLine();
             wordleWordBank.add(currentWord);
         }
@@ -61,7 +64,8 @@ public class WordleSolver {
         fileStream.close();
         fileReader.close();
         
-        for (int i = 1; i <= 6; i++) { //Loop that goes through all six possible guesses and alerts user what words are possible to guess based on the hints they've acquired.
+        //Loop that goes through all six possible guesses and alerts user what words are possible to guess based on the hints they've acquired.
+        for (int i = 1; i <= 6; i++) { 
 
             if (i == 1) {
                 System.out.println("Welcome! Please provide your first guess!");
@@ -73,21 +77,34 @@ public class WordleSolver {
             String guess = scnr.nextLine();
 
             System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
+
             String hint = scnr.nextLine();
+            
+            //Boolean validates that guess and hint are same length. Checks that all characters in hint are valid characters.
+            boolean isValidHint = (hint.length() == guess.length()) && (hint.chars().allMatch(c -> c == 'g' || c == 'x' || c == 'y')); 
+
+            //While hint is not valid the program will prompt user to enter their hint until it is validated
+            while (!isValidHint) {
+                System.out.println("\nInvalid character or length, please try again and ensure your inputs are valid");
+                System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
+                hint = scnr.nextLine();
+                isValidHint = (hint.length() == guess.length()) && (hint.chars().allMatch(c -> c == 'g' || c == 'x' || c == 'y'));
+            }
+
 
             if (hint.equals("ggggg")) { //Once all letters are green the word is correct and the code breaks.
                 break;
             }
             
-            /*for (int j = 0; j < 5; j++ ) { //Validates that every character in the hint string is a valid hint character
-                if (hint.charAt(j) != ('g') || hint.charAt(j) != 'y' || hint.charAt(j) != 'x') {
-                    System.out.println("Invalid hint character, please try again.");
-                    i--;
-                }
-            }*/
+            //Maintains hints from previous guesses in the same ArrayList and updates all previous valid words, rather than remake the ArrayList on every iteration.
+            if (i == 1) {
+                updatedWordBank = findValidWords(wordleWordBank, guess, hint);
+            }
+            else {
+                updatedWordBank = findValidWords(updatedWordBank, guess, hint);
+            }
 
-            findValidWords(wordleWordBank, guess, hint);
-            System.out.println("\nPossible words after guess " + i + ":\n" + wordleWordBank);
+            System.out.println("\nPossible words after guess " + i + ":\n" + updatedWordBank);
         }
 
         scnr.close();
