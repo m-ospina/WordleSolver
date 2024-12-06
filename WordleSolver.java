@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class WordleSolver {
 
-    //Iterates through the list of words and outputs all viable words to a new arraylist
+    //Iterates through the list of words and outputs all viable words to a new arraylist.
     public static ArrayList<String> findValidWords (ArrayList<String> wordleWordBank, String guess, String hints) {
         ArrayList<String> validWords = new ArrayList <String>();
 
@@ -81,6 +81,18 @@ public class WordleSolver {
         return validChars;
     }
 
+    public static void promptForHint() {
+        System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
+    }
+
+    public static void lengthErrorMessage() {
+        System.out.println("\nInvalid length for guess, please provide a valid guess.");
+    }
+
+    public static void characterErrorMessage() {
+        System.out.println("\nInvalid character, please try again and ensure your characters are valid.");
+    }
+
     public static void main(String[] args) throws IOException {
         FileInputStream fileStream = new FileInputStream("wordle_wordbank.txt");
         Scanner fileReader = new Scanner(fileStream);
@@ -88,7 +100,7 @@ public class WordleSolver {
         ArrayList<String> wordleWordBank = new ArrayList<String> ();
         ArrayList<String> updatedWordBank = new ArrayList<String>();
 
-        //Reads all possible wordle words from input from a file
+        //Reads all possible wordle words from input from a file.
         while (fileReader.hasNextLine()) { 
             String currentWord = fileReader.nextLine();
             wordleWordBank.add(currentWord);
@@ -97,7 +109,7 @@ public class WordleSolver {
         fileStream.close();
         fileReader.close();
         
-        //Loop that goes through all six possible guesses and alertssp user what words are possible to guess based on the hints they've acquired.
+        //Loop that goes through all six possible guesses and alerts user what words are possible to guess based on the hints they've acquired.
         for (int i = 1; i <= 6; i++) { 
             if (i == 1) {
                 System.out.println("Welcome! Please provide your first guess!");
@@ -110,29 +122,29 @@ public class WordleSolver {
             
             //Prompts user to reenter guess until length is valid.
             while (guess.length() != 5) {
-                System.out.println("\nInvalid length for guess, please provide a valid guess.");
+                lengthErrorMessage();
                 guess = scnr.nextLine();
             }
 
-            System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
+            promptForHint();
             String hint = scnr.nextLine();
             
-            //Initializes boolean values that validate hint character and length using validation methods.
+            //Initializes boolean values that validate hint characters and length using validation methods.
             boolean isValidHint = validateHint(guess, hint);
             boolean isSameLength = validateLength(guess, hint);
 
             //If false, returns an error message prompting user to reenter hint characters until length matches guess length.
             while (!isSameLength) {
-                System.out.println("\nInvalid length, please try again and ensure guess and hint are same length.");
-                System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
+                lengthErrorMessage();
+                promptForHint();
                 hint = scnr.nextLine();
                 isSameLength = validateLength(guess, hint);
             }
 
             //If false, returns an error message prompting user to reenter hint characters until all characters match valid character choices.
             while (!isValidHint) {
-                System.out.println("\nInvalid character, please try again and ensure your characters are valid.");
-                System.out.println("\nInput all hints gained from this guess. \nType \"g\" for Green, \"y\" for Yellow, and \"x\" for Gray.");
+                characterErrorMessage();
+                promptForHint();
                 hint = scnr.nextLine();
                 isValidHint = validateHint(guess, hint);
             }
@@ -156,6 +168,6 @@ public class WordleSolver {
         scnr.close();
 
         //Outputs a congratulatory message when the user inputs all green letters
-        System.out.println("\nCongratulations on successfully guessing the wordle today!");
+        System.out.println("\nCongratulations on successfully guessing today's wordle!");
     }
 }
