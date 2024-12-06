@@ -10,6 +10,8 @@ Then, in the main loop, the program welcomes the user to the WordleSolver and as
 
 User input must include a five-letter word and a five-letter group of hints that represent the colors of their hints. Green letters are signified by 'g', yellow by 'y', and gray by 'x'.
 
+Based on user input, the information gained from the colors of the hints will allow the program to find all viable words for subsequent guesses and output these words to the user, asking that they use these words for a more efficient Wordle experience.
+
 ## Validation 
 Methods such as _validateLength_ and _validateHint_ check to see that both guess and hint are five characters long and that the letters of the hint solely consist of g, y, and x. When hints are valid, a true boolean value is output, and if false, a false value is output.
 
